@@ -62,7 +62,7 @@
 </head>
 <?
 use Bitrix\Main\Application;
-//use CalendarApp\CalendarApp;
+
 function getCalendar($ID, $ORDER = "DESC", $BY = "DATE_FROM") {
 
     $queryUrl = 'http://'.$_SERVER['SERVER_NAME']. '/local/task/get_task.php?ID='.$ID."&ORDER=".$ORDER."&BY=".$BY;
@@ -192,56 +192,7 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
 <script src="//api.bitrix24.com/api/v1/dev/"></script>
 
-<script>
-    $(document).ready(function() {
-        $('#example').DataTable(
-            {
-                initComplete: function () {
-                    this.api().columns().every( function () {
-                        var column = this;
-                        var select = $('<select class="filter"><option value=""></option></select>')
-                            .appendTo( $("#example thead tr:eq(1) th").eq(column.index()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
-
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option>'+d+'</option>' );
-                        } );
-                    } );
-                },
-                orderCellsTop: true,
-                language: {
-                    "searchPlaceholder": "Поиск",
-                    "processing": "Подождите...",
-                    "search": "Поиск:",
-                    "lengthMenu": "Показать _MENU_ записей",
-                    "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
-                    "infoEmpty": "Записи с 0 до 0 из 0 записей",
-                    "infoFiltered": "(отфильтровано из _MAX_ записей)",
-                    "infoPostFix": "",
-                    "loadingRecords": "Загрузка записей...",
-                    "zeroRecords": "Записи отсутствуют.",
-                    "emptyTable": "В таблице отсутствуют данные",
-                    "paginate": {
-                        "first": "Первая",
-                        "previous": "Предыдущая",
-                        "next": "Следующая",
-                        "last": "Последняя"
-                    }
-                }
-            }
-        );
-    } );
-
-</script>
-
+<script src="/local/history_visits/js/js.js"></script>
 
 <script>
 	function fitHeight()
