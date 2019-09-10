@@ -3,7 +3,24 @@
 Разработаны скрипты для Битрикс 24
 Подключение дополнительной вкладки к компании "История визитов", перечеркивание выполненных задач в календаре. 
 
-Отлавливаем event
+## Чтобы работала задача по перечеркиванию выполненных задач в календаре, нужно поменять две строчки в нескольких файлах
+### Со временем Битрикс 24 будет обновляться и эти изменения в ядре могут быть затерты
+1) /bitrix/js/calendar/new/calendar-view-month.js
+
+partWrap = BX.create('DIV', {
+attrs: {'data-bx-calendar-entry': entry.uid, 'status': entry.data.STATUS},
+props: {className: entryClassName}, style: {
+top: 0,
+left: 'calc((100% / ' + this.dayCount + ') * (' + (from.dayOffset + 1) + ' - 1) + 2px)',
+width: 'calc(' + daysCount + ' * 100% / ' + this.dayCount + ' - ' + deltaPartWidth + 'px)'
+}
+});
+
+2) /bitrix/modules/calendar/classes/general/calendar.php - класс календаря
+
+
+
+## Отлавливаем event
 
 BX.addCustomEvent('onEntityDetailsTabShow', function (currentTab) {
     // Тут можно описать собственную логику
@@ -37,7 +54,8 @@ BX.addCustomEvent('onEntityDetailsTabShow', function (currentTab) {
 });
 
 
-Добавление табов
+## Добавление табов
+
 
 $(document).ready(function () {
 
