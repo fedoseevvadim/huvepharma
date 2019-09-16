@@ -93,9 +93,10 @@ function getCalendar($ID, $ORDER = "DESC", $BY = "DATE_FROM") {
 }
 
 
-function getUser( $BX_USER_ID ) {
+function getUser() {
 
-    $queryUrl = 'http://'.$_SERVER['SERVER_NAME']. '/local/task/get_user.php?BX_USER_ID='.$BX_USER_ID;
+    //$queryUrl = 'http://'.$_SERVER['SERVER_NAME']. '/local/task/get_user.php?BX_USER_ID='.$BX_USER_ID;
+    $queryUrl = 'http://'.$_SERVER['SERVER_NAME'].'/rest/user.current.json?auth='.$_REQUEST["AUTH_ID"];
 
     $curl = curl_init();
 
@@ -175,13 +176,13 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
     $ID = $placementOptions["ID"];
 
     $arrData = getCalendar($ID);
-    $userId  = getUser( $_COOKIE["BX_USER_ID"] );
+    $userData  = getUser();
     $arrData = json_decode($arrData, true);
-    $arrUser = json_decode($userId, true);
+    $arrUser = json_decode($userData, true);
 
     if ( count($arrUser ) > 0 ) {
 
-        $userID = $arrUser[0]["ID"];
+        $userID = $arrUser["result"]["ID"];
 
     }
 
@@ -208,7 +209,7 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
                 ?>
                 <tr>
                     <td class="span_txt">
-                        <a target="_blank" href="https://localhost/company/personal/user/<?=$userID?>/calendar/?EVENT_ID=<?=$data["ID"];?>"> <?=$data["NAME"];?></a>
+                        <a target="_blank" href="/company/personal/user/<?=$userID?>/calendar/?EVENT_ID=<?=$data["ID"];?>"> <?=$data["NAME"];?></a>
                     </td>
                     <td scope="row">
                         <?= $data["DATE_FROM"] ?>
@@ -235,6 +236,12 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
 <script src="/local/history_visits/js/js.js"></script>
 
 <script>
+
+    // BX24.callMethod('user.current', {}, function(res){
+    //     document.cookie = "USER_ID=" + res.data().ID;
+    //     alert(getcookie('USER_ID'));
+    //     //alert('Привет, ' + res.data().ID + '!');
+    // });
 
     function fitHeight()
 	{

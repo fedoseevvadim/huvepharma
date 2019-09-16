@@ -21,6 +21,8 @@ if ( strlen($ID) > 0 ) {
                 WHERE BX_USER_ID = '$ID'
             ";
 
+    file_put_contents($_SERVER["DOCUMENT_ROOT"]."/upload/test.txt", $ID);
+
     $recordset = $connection->query($sql);
     $session = bitrix_sessid();
 
