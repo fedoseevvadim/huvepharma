@@ -16,6 +16,7 @@ $ID     = (int) $_GET["ID"];
 $BY     = $_GET["BY"];
 $ORDER  = $_GET["ORDER"];
 
+
 switch ($BY) {
 
   case "USER_NAME":
@@ -35,7 +36,7 @@ switch ($BY) {
 }
 
 $sql = "
-        SELECT uce.*, ce.*, u.NAME as USER_NAME, u.LAST_NAME as USER_LAST_NAME
+        SELECT uce.*, ce.*, u.ID as USER_ID, u.NAME as USER_NAME, u.LAST_NAME as USER_LAST_NAME
         FROM b_utm_calendar_event as uce
         LEFT JOIN b_calendar_event as ce ON uce.VALUE_ID = ce.ID
         LEFT JOIN b_user as u ON ce.OWNER_ID = u.ID
@@ -45,6 +46,7 @@ $sql = "
 
 
 $recordset = $connection->query($sql);
+$session = bitrix_sessid();
 
 while ($record = $recordset->fetch()) {
 
@@ -54,11 +56,15 @@ while ($record = $recordset->fetch()) {
   $arrVals["USER_LAST_NAME"]  = $record["USER_LAST_NAME"];
   $arrVals["DATE_FROM"]       = $record["DATE_FROM"]->toString();
   $arrVals["DATE_TO"]         = $record["DATE_TO"]->toString();
+  $arrVals["SESSION"]         = $session;
+  $arrVals["USER_ID"]         = $record["USER_ID"];
 
   $arr[] = $arrVals;
 }
 
 echo json_encode($arr);
+
+
 
 ?>
 

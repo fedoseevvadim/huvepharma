@@ -63,6 +63,11 @@
 <?
 use Bitrix\Main\Application;
 
+//require_once ("/bitrix/modules/main/tools.php");
+
+//\CJSCore::Init();
+
+
 function getCalendar($ID, $ORDER = "DESC", $BY = "DATE_FROM") {
 
     $queryUrl = 'http://'.$_SERVER['SERVER_NAME']. '/local/task/get_task.php?ID='.$ID."&ORDER=".$ORDER."&BY=".$BY;
@@ -85,6 +90,32 @@ function getCalendar($ID, $ORDER = "DESC", $BY = "DATE_FROM") {
     curl_close($curl);
 
     return $response;
+}
+
+
+function getUser( $BX_USER_ID ) {
+
+    $queryUrl = 'http://'.$_SERVER['SERVER_NAME']. '/local/task/get_user.php?BX_USER_ID='.$BX_USER_ID;
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => $queryUrl,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+    ));
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    return $response;
+
 }
 
 function getBXGrid() {
@@ -144,7 +175,15 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
     $ID = $placementOptions["ID"];
 
     $arrData = getCalendar($ID);
+    $userId  = getUser( $_COOKIE["BX_USER_ID"] );
     $arrData = json_decode($arrData, true);
+    $arrUser = json_decode($userId, true);
+
+    if ( count($arrUser ) > 0 ) {
+
+        $userID = $arrUser[0]["ID"];
+
+    }
 
     if ( count($arrData) > 0 ) {
         ?>
@@ -165,10 +204,11 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
 
             <?
             foreach ($arrData as $data) {
+
                 ?>
                 <tr>
                     <td class="span_txt">
-                        <?= $data["NAME"] ?>
+                        <a target="_blank" href="https://localhost/company/personal/user/<?=$userID?>/calendar/?EVENT_ID=<?=$data["ID"];?>"> <?=$data["NAME"];?></a>
                     </td>
                     <td scope="row">
                         <?= $data["DATE_FROM"] ?>
@@ -195,7 +235,8 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
 <script src="/local/history_visits/js/js.js"></script>
 
 <script>
-	function fitHeight()
+
+    function fitHeight()
 	{
 		BX24.resizeWindow(document.body.clientWidth,
 			document.getElementsByClassName("workarea")[0].clientHeight);
@@ -221,6 +262,60 @@ if( $_REQUEST['action'] == 'COMPANY_HISTORY_VISITS' ):
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
+    function openApplication(ID)
+    {
+        BX24.openApplication(
+            {
+                'opened': true,
+                'ID': ID,
+                'action': 'show_event'
+            },
+            function()
+            {
+                // этот обработчик сработает, когда приложение будет закрыто
+                // alert('Application closed!')
+            }
+        );
+
+        setTimeout(closeApplication, 15000); // автоматически закрыть через 15 секунд
+    }
+
+    function closeApplication()
+    {
+        BX24.closeApplication();
+    }
+
+    // function getEvent(ID, SESSION) {
+    //
+	//     //console.log(ID);
+    //     //console.log(SESSION);
+    //
+    //     BX.ajax({
+    //         'url': '/bitrix/components/bitrix/crm.activity.editor/ajax.php?siteID=s1&sessid='+SESSION+'&id='+ID+'&action=get_activity',
+    //         'method': 'POST',
+    //         'dataType': 'json',
+    //         'data':
+    //             {
+    //                 'ACTION' : 'GET_ACTIVITY',
+    //                 'ID': ID,
+    //             },
+    //         onsuccess: BX.delegate(
+    //             function(data)
+    //             {
+    //                 if(typeof(data['ACTIVITY']) !== 'undefined')
+    //                 {
+    //                     this._handleActivityChange(data['ACTIVITY']);
+    //                     this.openActivityDialog(BX.CrmDialogMode.view, id, options, null);
+    //                 }
+    //             },
+    //             this
+    //         ),
+    //         onfailure: function(data){}
+    //     });
+    //
+    //
+    //
+    // }
 
 </script>
 

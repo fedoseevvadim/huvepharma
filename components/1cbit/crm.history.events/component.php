@@ -47,7 +47,7 @@ $ajaxLoaderParams = array(
 );
 
 
-$arrData = getCalendar($ID, $ORDER, $BY);
+$arrData = getCalendar( $ID, $ORDER, $BY );
 $arrData = json_decode($arrData, true);
 
 foreach ( $arrData as $data ) {
